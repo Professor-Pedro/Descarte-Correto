@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descarte Correto - Nível Difícil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    #timer {
+      font-size: 24px;
+      color: red;
+    }
+    .lixeiras {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .lixeira {
+      width: 150px;
+      min-height: 280px;
+      border: 3px solid #555;
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .cards, .nome-lixeiras {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .card {
+      width: 110px;
+      height: 50px;
+      background-color: #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      font-weight: bold;
+      margin: 2px;
+    }
+    #resultado {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Descarte Correto - Nível Difícil</h1>
+  <div id="timer">Tempo restante: 3:00</div>
+  <h3>Arraste os materiais e os nomes das lixeiras para o local correto</h3>
+
+  <div class="cards" id="nomesLixeiras"></div>
+  <div class="lixeiras" id="lixeiraContainer"></div>
+  <div class="cards" id="cards" style="min-height: 100px; border: 2px dashed #aaa;"></div>
+  <div id="resultado"></div>
+
+  <script>
+    const lixeirasInfo = [
+      { nome: 'Papel', tipo: 'papel', cor: 'blue' },
+      { nome: 'Plástico', tipo: 'plastico', cor: 'red' },
+      { nome: 'Vidro', tipo: 'vidro', cor: 'green' },
+      { nome: 'Metal', tipo: 'metal', cor: 'yellow' },
+      { nome: 'Orgânico', tipo: 'organico', cor: 'brown' },
+      { nome: 'Perigoso', tipo: 'perigoso', cor: 'orange' },
+      { nome: 'Rejeito', tipo: 'rejeito', cor: 'gray' },
+    ];
+
+    function embaralhar(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const lixeiraContainer = document.getElementById('lixeiraContainer');
+    lixeirasInfo.forEach(info => {
+      const lixeira = document.createElement('div');
+      lixeira.className = 'lixeira';
+      lixeira.style.backgroundColor = info.cor;
+      lixeira.dataset.tipo = info.tipo;
+      lixeiraContainer.appendChild(lixeira);
+    });
+
+    const nomesLixeiras = document.getElementById('nomesLixeiras');
+    embaralhar([...lixeirasInfo]).forEach(info => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.draggable = true;
+      card.textContent = info.nome;
+      card.dataset.tipo = info.tipo;
+      card.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', card.dataset.tipo);
+        e.dataTransfer.setData('text/id', card.textContent);
+      });
+      nomesLixeiras.appendChild(card);
+    });
+
+    const materiais = [
+      { nome: 'Jornal', tipo: 'papel' }, { nome: 'Papelão', tipo: 'papel' }, { nome: 'Revista', tipo: 'papel' },
+      { nome: 'Envelope', tipo: 'papel' }, { nome: 'Impressão', tipo: 'papel' }, { nome: 'Caderno', tipo: 'papel' },
+      { nome: 'Garrafa PET', tipo: 'plastico' }, { nome: 'Sacola', tipo: 'plastico' }, { nome: 'Canudo', tipo: 'plastico' },
+      { nome: 'Copo descartável', tipo: 'plastico' }, { nome: 'Embalagem de shampoo', tipo: 'plastico' }, { nome: 'Brinquedo', tipo: 'plastico' },
+      { nome: 'Garrafa de vidro', tipo: 'vidro' }, { nome: 'Pote de conserva', tipo: 'vidro' }, { nome: 'Caco de vidro', tipo: 'vidro' },
+      { nome: 'Frasco de perfume', tipo: 'vidro' }, { nome: 'Vidro temperado', tipo: 'vidro' }, { nome: 'Jarra de vidro', tipo: 'vidro' },
+      { nome: 'Lata de refrigerante', tipo: 'metal' }, { nome: 'Lata de conserva', tipo: 'metal' }, { nome: 'Prego', tipo: 'metal' },
+      { nome: 'Chave', tipo: 'metal' }, { nome: 'Fio de cobre', tipo: 'metal' }, { nome: 'Tampa de garrafa', tipo: 'metal' },
+      { nome: 'Restos de comida', tipo: 'organico' }, { nome: 'Casca de fruta', tipo: 'organico' }, { nome: 'Folha seca', tipo: 'organico' },
+      { nome: 'Borra de café', tipo: 'organico' }, { nome: 'Papel sujo', tipo: 'organico' }, { nome: 'Casca de ovo', tipo: 'organico' },
+      { nome: 'Pilhas', tipo: 'perigoso' }, { nome: 'Medicamentos', tipo: 'perigoso' }, { nome: 'Tintas', tipo: 'perigoso' },
+      { nome: 'Óleo de motor', tipo: 'perigoso' }, { nome: 'Agulhas', tipo: 'perigoso' }, { nome: 'Inseticida', tipo: 'perigoso' },
+      { nome: 'Fralda descartável', tipo: 'rejeito' }, { nome: 'Papel higiênico', tipo: 'rejeito' }, { nome: 'Espuma', tipo: 'rejeito' },
+      { nome: 'Cerâmica quebrada', tipo: 'rejeito' }, { nome: 'Lixo do banheiro', tipo: 'rejeito' }, { nome: 'Bituca de cigarro', tipo: 'rejeito' }
+    ];
+
+    const cardsContainer = document.getElementById('cards');
+    let acertos = 0;
+    embaralhar(materiais).forEach(material => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.draggable = true;
+      card.textContent = material.nome;
+      card.dataset.tipo = material.tipo;
+      card.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', card.dataset.tipo);
+        e.dataTransfer.setData('text/id', card.textContent);
+      });
+      cardsContainer.appendChild(card);
+    });
+
+    document.querySelectorAll('.lixeira').forEach(lixeira => {
+      lixeira.addEventListener('dragover', e => e.preventDefault());
+      lixeira.addEventListener('drop', e => {
+        e.preventDefault();
+        const tipo = e.dataTransfer.getData('text/plain');
+        const nome = e.dataTransfer.getData('text/id');
+        const card = Array.from(document.querySelectorAll('.card')).find(c => c.textContent === nome);
+        if (card) {
+          lixeira.appendChild(card);
+          card.style.cursor = 'grab';
+          card.style.backgroundColor = '#fff';
+          card.style.border = '1px solid #000';
+          card.addEventListener('dragstart', e => {
+            e.dataTransfer.setData('text/plain', card.dataset.tipo);
+            e.dataTransfer.setData('text/id', card.textContent);
+          });
+        }
+        if (tipo === lixeira.dataset.tipo && card.dataset.tipo === lixeira.dataset.tipo) {
+          acertos++;
+        }
+      });
+    });
+
+    let tempo = 180;
+    const timer = document.getElementById('timer');
+    const interval = setInterval(() => {
+      tempo--;
+      const minutos = Math.floor(tempo / 60);
+      const segundos = tempo % 60;
+      timer.textContent = `Tempo restante: ${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+      if (tempo <= 0) {
+        clearInterval(interval);
+        document.getElementById('resultado').textContent = `Você acertou ${acertos} materiais!`;
+        document.querySelectorAll('.card').forEach(card => card.draggable = false);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
